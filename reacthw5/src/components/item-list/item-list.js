@@ -1,104 +1,60 @@
 import React, { Component } from "react";
 
 import "./item-list.css";
-// import Error from "../error";
-// import SwapiService from "../../services/swapi-service";
+import Error from "../error";
+import Spinner from "../spinner";
+import SwapiService from "../../services/swapi-service";
 
 export default class ItemList extends Component {
-  constructor() {
-    super();
-  }
+  swapi = new SwapiService();
+
   state = {
-    planets: []
+    items: [],
+    error: false,
+    loading: false
   };
 
-  componentWillMount() {
-    const api = `https://swapi.co/api/planets/`;
-    fetch(api)
-      .then(response => response.json())
-      .then(data => this.setState({ planets: data.results }))
-      .catch(error => alert("error", error));
+  componentDidMount() {
+    this.swapi
+      .getAllPeople()
+      .then(data => {
+        this.setState({ items: data });
+      })
+      .catch(this.componentDidCatch());
+  }
+
+  componentDidCatch() {
+    this.setState({
+      error: true
+    });
   }
 
   render() {
-    const { planets } = this.state;
+    const { items, error, loading } = this.state;
+    const { onSelectedItems } = this.props;
+    const errors = error ? <Error /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const contentInDiv = (
+      <ul className="item-list list-group">
+        {items.map(item => (
+          <li
+            className="list-group-item"
+            key={item.id}
+            onClick={() => onSelectedItems(item.id)}
+          >
+            {item.name}
+          </li>
+        ))}
+      </ul>
+    );
+    const content = !errors & !loading ? errors : contentInDiv;
+
     return (
       <div>
-        {planets.map(planet => (
-          <ul className="item-list list-group" key={planet.name}>
-            <li className="list-group-item">{planet.name}</li>
-          </ul>
-        ))}
+        {/* {errors} */}
+        {spinner}
+        {content}
       </div>
     );
   }
 }
-// async getAllPlanet() {
-//   const res = await this.getResource(`/planets/`);
-//   return res.results.map();
-// }
-
-//   swapiService = new SwapiService();
-
-//   state = {
-//     res: [],
-//     error: false
-//   };
-
-//   constructor() {
-//     super();
-//     this.allPlanetList();
-//   }
-
-//   onPlanetLoaded = res => {
-//     this.setState({
-//       res
-//     });
-//     console.log(this.state.res);
-//   };
-
-//   allPlanetList() {
-//     // const id = 13;
-//     this.swapiService
-//       .getAllPlanet()
-//       .then(this.onPlanetLoaded)
-//       .catch(this.onError);
-//   }
-
-//   onError = e => {
-//     this.setState({
-//       e,
-//       error: true
-//     });
-//     alert("er");
-//   };
-
-//   render() {
-//     const { res, error } = this.state;
-//     const errors = error ? <Error /> : null;
-//     const content = !error ? <PlanetView res={res} /> : null;
-
-//     return (
-//       <div className="i">
-//         {errors}
-//         {content}
-
-//         <h3>TITLE</h3>
-//         <ul className="item-list list-group">
-//           <li className="list-group-item">Luke Skywalker</li>
-//         </ul>
-//       </div>
-//     );
-//   }
-// }
-
-// const PlanetView = ({ res }) => {
-//   const { name } = res;
-//   return (
-//     <React.Fragment>
-//       <div>
-//         <h4>{name}</h4>
-//       </div>
-//     </React.Fragment>
-//   );
-// };
