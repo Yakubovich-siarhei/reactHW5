@@ -1,60 +1,46 @@
 import React, { Component } from "react";
 
 import "./item-list.css";
-import Error from "../error";
+// import Error from "../error";
 import Spinner from "../spinner";
 import SwapiService from "../../services/swapi-service";
 
 export default class ItemList extends Component {
-  swapi = new SwapiService();
+  swapiservice = new SwapiService();
 
   state = {
-    items: [],
-    error: false,
-    loading: false
+    peoplelist: null
   };
 
   componentDidMount() {
-    this.swapi
-      .getAllPeople()
-      .then(data => {
-        this.setState({ items: data });
-      })
-      .catch(this.componentDidCatch());
+    this.swapiservice.getAllPeople().then(peoplelist => {
+      // this.props.getData().then(peoplelist => {          /*  не работает!!! */
+      this.setState({ peoplelist });
+    });
   }
 
-  componentDidCatch() {
-    this.setState({
-      error: true
+  rederItems(arr) {
+    return arr.map(item => {
+      return (
+        <li
+          className="list-group-item"
+          key={item.id}
+          onClick={() => this.props.onSelected(item.id)}
+        >
+          {this.props.children(item)}
+        </li>
+      );
     });
   }
 
   render() {
-    const { items, error, loading } = this.state;
-    const { onSelectedItems } = this.props;
-    const errors = error ? <Error /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const contentInDiv = (
-      <ul className="item-list list-group">
-        {items.map(item => (
-          <li
-            className="list-group-item"
-            key={item.id}
-            onClick={() => onSelectedItems(item.id)}
-          >
-            {item.name}
-          </li>
-        ))}
-      </ul>
-    );
-    const content = !errors & !loading ? errors : contentInDiv;
+    const { peoplelist } = this.state;
 
-    return (
-      <div>
-        {/* {errors} */}
-        {spinner}
-        {content}
-      </div>
-    );
+    if (!peoplelist) {
+      return <Spinner />;
+    }
+
+    const items = this.rederItems(peoplelist);
+    return <ul className="item-list list-group-item">{items}</ul>;
   }
 }
