@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./item-details.css";
 import SwapiService from "../../services/swapi-service";
 // import Error from "../error";
-// import Spinner from "../spinner";
+import Spinner from "../spinner";
 
 export default class PersonDetails extends Component {
   swapiservice = new SwapiService();
@@ -28,7 +28,7 @@ export default class PersonDetails extends Component {
     const { itemId } = this.props;
 
     if (!itemId) {
-      return;
+      return <Spinner />;
     }
 
     this.swapiservice.getPerson(itemId).then(item => {
@@ -70,7 +70,7 @@ export default class PersonDetails extends Component {
 
   render() {
     const { item } = this.state;
-    const { getImage } = this.props;
+    const { getImageUrl } = this.props;
 
     if (!item) {
       return <span>null</span>;
@@ -79,7 +79,7 @@ export default class PersonDetails extends Component {
 
     return (
       <div className="person-details card">
-        <img className="person-image" src={getImage(item)} alt="starwars" />
+        <img className="person-image" src={getImageUrl(item)} alt="starwars" />
         <div className="card-body">
           <h4>{name}</h4>
           <ul className="list-group list-group-flush">
