@@ -21,6 +21,8 @@ const PersonDetails = withService(personDetails);
 
 const planetDetails = ({ itemId, swapiService }) => {
   const { getPlanet, getPlanetImage } = swapiService;
+
+  console.log(itemId);
   return (
     <ItemDetails
       itemId={itemId}
