@@ -32,7 +32,7 @@ export default class PersonDetails extends Component {
       return <Spinner />;
     }
 
-    this.swapiservice.getPerson(itemId).then(item => {
+    this.props.getData(itemId).then(item => {
       this.setState({ item });
     });
   }

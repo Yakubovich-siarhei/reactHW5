@@ -7,6 +7,7 @@ class StarshipPage extends Component {
   render() {
     const { match } = this.props;
     const { id } = match.params;
+    console.log(this.props);
     return <Row left={<StarshipDetails itemId={Number(id)} />} />;
   }
 }
